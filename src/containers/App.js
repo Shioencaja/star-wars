@@ -37,7 +37,7 @@ class App extends React.Component {
     const filtro = nombre.filter((nombre) => {
       return nombre.name.toLowerCase().includes(busqueda.toLowerCase());
     });
-    return !filtro.length || !nombre ? (
+    return !filtro.length ? (
       <>
         <h2 className="text-center">Loading</h2>
       </>
