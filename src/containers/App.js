@@ -1,56 +1,44 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Buscador from "../components/Buscador";
 import ListaTarjetas from "../components/ListaTarjetas";
 import Scroll from "../components/Scroll";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      nombre: [],
-      busqueda: "",
-    };
-  }
-  componentDidMount() {
-    /* 
-    fetch("https://swapi.dev/api/people") //hace una petición al link para leer su interior
-      .then((response) => {
-        //agarra la respuesta de lo anterior
-        return response.json(); //y lo convierte en json
-      })
-      .then((personaje) => {
-        //luego a ese resultado le coloca un nombre, en este caso escogí personaje
-        this.setState({ nombre: personaje.results }); //y coloca como state en nombre el resultado anterior, usando personaje como una base de datos
-      }); 
-      */
-    //versión reducida
+function App() {
+  const [nombre, setNombre] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
     fetch("https://swapi.dev/api/people")
       .then((respuesta) => respuesta.json())
-      .then((personaje) => this.setState({ nombre: personaje.results }));
-  }
+      .then((personaje) => {
+        setNombre(personaje.results);
+      });
+  }, [count]);
 
-  alBuscar = (event) => {
-    this.setState({ busqueda: event.target.value });
+  const alBuscar = (event) => {
+    setBusqueda(event.target.value);
   };
-  render() {
-    const { nombre, busqueda } = this.state;
-    const filtro = nombre.filter((nombre) => {
-      return nombre.name.toLowerCase().includes(busqueda.toLowerCase());
-    });
-    return !filtro.length ? (
-      <>
-        <h2 className="text-center">Loading</h2>
-      </>
-    ) : (
-      <>
-        <h1 className="text-center text-amber-300">STAR WARS</h1>
-        <Buscador busqueda={this.alBuscar} />
-        <Scroll>
-          <ListaTarjetas personajes={filtro} />
-        </Scroll>
-      </>
-    );
-  }
+
+  const filtro = nombre.filter((nombre) => {
+    return nombre.name.toLowerCase().includes(busqueda.toLowerCase());
+  });
+  return !filtro.length ? (
+    <>
+      <h2 className="text-center">Loading</h2>
+      <Buscador busqueda={alBuscar} />
+    </>
+  ) : (
+    <>
+      <h1 className="text-center text-amber-300">STAR WARS</h1>
+
+      <Buscador busqueda={alBuscar} />
+      <Scroll>
+        <ListaTarjetas personajes={filtro} />
+      </Scroll>
+      <button onClick={() => setCount(count + 1)}>Reload</button>
+    </>
+  );
 }
 
 export default App;
